@@ -27,7 +27,6 @@ type Todo struct {
 var collection *mongo.Collection
 
 func main() {
-	fmt.Println("Helo, Bandung")
 
 	if os.Getenv("ENV") != "production" {
 		// Load the .env if not in production

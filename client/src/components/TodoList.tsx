@@ -1,4 +1,5 @@
 
+import { BASE_URL } from "../App";
 import Loader from "../ui/Loader";
 import TodoItem from "./TodoItem";
 import { useQuery } from "@tanstack/react-query";
@@ -16,7 +17,7 @@ const TodoList = () => {
     queryKey: ['todos'],
     queryFn: async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/todos")
+            const res = await fetch(BASE_URL)
             const data = await res.json()
 
             if (!res.ok) {
