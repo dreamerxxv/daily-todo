@@ -52,9 +52,15 @@ const TodoForm = () => {
 
   return (
     <div className="px-3 lg:px-16">
-      <h1 className="mt-6 block text-3xl lg:text-5xl leading-none font-bold text-gray-900">
+      <h1 className="mt-14 block text-3xl lg:text-5xl leading-none font-bold text-gray-900">
         Today's Todo 💻
       </h1>
+
+      <p className="mt-3 lg:w-[70%] w-[80%] text-gray-700 text-sm">
+        What is your todo for today? Start today by writing down your tasks and staying productive. 🚀
+      </p>
+
+      {/* "Don't let your great ideas disappear! Start today by writing down your tasks and staying productive. Add a to-do list now and make your best plans come true!" 🚀 */}
 
       <form onSubmit={createTodo}>
         <div className="mt-6 flex w-full items-center gap-x-3">
@@ -85,11 +91,11 @@ const TodoForm = () => {
             value={newTodo}
             onChange={(e) => setNewTodo(e.target.value)}
             placeholder="Type your todo"
-            className="min-w-0 flex-auto rounded-xl bg-white/5 px-3.5 py-1.5 text-base text-gray-700 outline-1 -outline-offset-1 outline-primary placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            className="min-w-0 flex-auto rounded-xl bg-white/5 px-3.5 py-2.5 text-base text-gray-700 outline-1 -outline-offset-1 outline-primary placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
           />
           <button
             type="submit"
-            className="flex-none rounded-xl bg-indigo-500 px-3.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className="flex-none rounded-xl bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
           >
             {isCreating ? (
               <Spinner />

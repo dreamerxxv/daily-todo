@@ -40,8 +40,8 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  text-align: center;
-  place-items: center;
+  {{/* text-align: center;
+  place-items: center; */}}
   min-height: 100vh;
 }
 

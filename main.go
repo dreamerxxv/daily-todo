@@ -82,9 +82,22 @@ func main() {
 func getTodos(c *fiber.Ctx) error {
 	var todos []Todo
 
-	cursor, err := collection.Find(context.Background(), bson.M{})
+	// Get the current date (only date, without time)
+	now := time.Now()
+	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	endOfDay := startOfDay.Add(24 * time.Hour)
+
+	// Filter only data with CreatedAt between startOfDay and endOfDay
+	filter := bson.M{
+		"createdAt": bson.M{
+			"$gte": startOfDay,
+			"$lt":  endOfDay,
+		},
+	}
+
+	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch todos"})
 	}
 
 	for cursor.Next(context.Background()) {
