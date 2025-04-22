@@ -14,7 +14,7 @@ export type Todo = {
 
 const TodoList = () => {
   const { data: todos, isLoading } = useQuery<Todo[]>({
-    queryKey: ['todos'],
+    queryKey: ["todos"],
     queryFn: async () => {
         try {
             const res = await fetch(BASE_URL + "/todos")

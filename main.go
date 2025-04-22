@@ -59,9 +59,12 @@ func main() {
 	// app.Use(cors.New(cors.Config {
 	// 	AllowOrigins: "http://localhost:5173",
 	// 	AllowHeaders: "Origin,Content-Type,Accept",
+	// 	AllowMethods: "GET,POST,PUT,DELETE,PATCH",
 	// }))
 
 	app.Get("/api/todos", getTodos)
+
+	app.Get("/api/alltodos", getAllTodos)
 	app.Post("/api/todos", createTodo)
 	app.Patch("/api/todos/:id", updateTodo)
 	app.Delete("/api/todos/:id", deleteTodo)
@@ -78,7 +81,30 @@ func main() {
 	log.Fatal(app.Listen("0.0.0.0:" + port))
 }
 
+
 // Get all todos from database MongoDB
+func getAllTodos(c *fiber.Ctx) error {
+	var todos []Todo
+
+	cursor, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		return err
+	}
+
+	for cursor.Next(context.Background()) {
+		var todo Todo
+
+		if err := cursor.Decode(&todo); err != nil {
+			return err
+		}
+
+		todos = append(todos, todo)
+	}
+
+	return c.JSON(todos)
+}
+
+// Get todos for today
 func getTodos(c *fiber.Ctx) error {
 	var todos []Todo
 

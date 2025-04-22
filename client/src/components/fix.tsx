@@ -7,48 +7,42 @@ import EmojiPicker from "emoji-picker-react";
 const TodoForm = () => {
   const [emojiIcon, setEmojiIcon] = useState("😀");
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
-
   const [newTodo, setNewTodo] = useState("");
   const queryClient = useQueryClient();
-  // const [isPending, setIsPending] = useState(false);
 
   const { mutate: createTodo, isPending: isCreating } = useMutation({
     mutationKey: ["createTodo"],
-    mutationFn: async (e: React.FormEvent) => {
-      e.preventDefault();
+    mutationFn: async () => {
+      const res = await fetch(BASE_URL + "/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ body: newTodo, icon: emojiIcon }),
+      });
 
-      try {
-        const res = await fetch(BASE_URL + "/todos", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({ body: newTodo, icon: emojiIcon }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || "Something went wrong!");
-        }
-
-        setNewTodo("");
-        setEmojiIcon("😀");
-        return data;
-
-      } catch (error: any) {
-        throw new Error(error);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong!");
       }
-    },
 
+      return data;
+    },
     onSuccess: () => {
+      setNewTodo("");
+      setEmojiIcon("😀");
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
-
     onError: (error: any) => {
       alert(error.message);
     },
   });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTodo.trim()) return;
+    createTodo();
+  };
 
   return (
     <div className="px-3 lg:px-16">
@@ -60,9 +54,7 @@ const TodoForm = () => {
         What is your todo for today? Start today by writing down your tasks and staying productive. 🚀
       </p>
 
-      {/* "Don't let your great ideas disappear! Start today by writing down your tasks and staying productive. Add a to-do list now and make your best plans come true!" 🚀 */}
-
-      <form onSubmit={createTodo}>
+      <form onSubmit={handleSubmit}>
         <div className="mt-6 flex w-full items-center gap-x-3 relative">
           <button
             className="relative p-2 bg-white/50 rounded-xl"
@@ -72,17 +64,16 @@ const TodoForm = () => {
             {emojiIcon}
           </button>
 
-          <div className="absolute mt-3 z-20 top-[40%] transform">
-            { openEmojiPicker && (
+          {openEmojiPicker && (
+            <div className="absolute z-20 top-14">
               <EmojiPicker
-              open={openEmojiPicker}
-              onEmojiClick={(icon) => {
-                setEmojiIcon(icon.emoji);
-                setOpenEmojiPicker(false);
-              }}
-            />
-            ) }
-          </div>
+                onEmojiClick={(icon) => {
+                  setEmojiIcon(icon.emoji);
+                  setOpenEmojiPicker(false);
+                }}
+              />
+            </div>
+          )}
 
           <input
             id="title"
@@ -93,6 +84,7 @@ const TodoForm = () => {
             placeholder="Type your todo"
             className="min-w-0 flex-auto rounded-xl bg-white/5 px-3.5 py-2.5 text-base text-gray-700 outline-1 -outline-offset-1 outline-primary placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
           />
+
           <button
             type="submit"
             className="flex-none rounded-xl bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
